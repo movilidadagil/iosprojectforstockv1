@@ -21,6 +21,7 @@ class ProductListViewController : UIViewController {
     let dbProductCount = Expression<Double>("productCount")
     let dbProductPrice = Expression<Double>("productPrice")
     
+    
     lazy var verticalStackView : UIStackView = {
         
         let vSv = UIStackView(arrangedSubviews: [
