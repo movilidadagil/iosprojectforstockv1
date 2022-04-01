@@ -7,6 +7,7 @@
 
 import UIKit
 import SQLite
+import FirebaseFirestore
 
 class ProductListViewController : UIViewController {
    
@@ -83,7 +84,7 @@ class ProductListViewController : UIViewController {
         for prdc in try db!.prepare(tblKardelen) {
             print("product: \(prdc[dbProductName]), count: \(prdc[dbProductCount]), price: \(prdc[dbProductPrice]), barkodu: \(prdc[dbProductBarcode])")
        
-            let tmpProduct = Product()
+            let tmpProduct = Product(data: ["ProductName" : "ProductName"])
             tmpProduct.productName=prdc[dbProductName]
             tmpProduct.productCount=prdc[dbProductCount]
             tmpProduct.productPrice=prdc[dbProductPrice]
@@ -100,7 +101,27 @@ class ProductListViewController : UIViewController {
         return count
     }
     func loadData(){
-        let rowCount=dbSelectOperation()
+        
+       
+        Firestore.firestore().collection("Products").getDocuments{ (snapshot, error) in
+            
+            if let error = error {
+                print("PRoducts could not retrieved: \(error)")
+                return
+            }
+            
+            snapshot?.documents.forEach({(dSnapshot) in
+                
+                let productsData  = dSnapshot.data()
+                print(productsData)
+                let tmpProduct = Product.init(data: productsData)
+                self.productArray.append(tmpProduct)
+                   // count=count+1
+                self.productsTableView.reloadData()
+            })
+        
+        }
+        /*let rowCount=dbSelectOperation()
         if(rowCount>0)
         {
             self.productsTableView.reloadData()
@@ -123,7 +144,7 @@ class ProductListViewController : UIViewController {
         else
         {
             print ("database empty")
-        }
+        }*/
     }
     
     func callDelegates()

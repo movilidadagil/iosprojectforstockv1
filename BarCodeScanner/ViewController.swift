@@ -7,12 +7,16 @@
 
 import UIKit
 import SQLite
+import FirebaseFirestore
 
 class ViewController: UIViewController {
     @IBOutlet weak var scanBarButton: UIButton!
     @IBOutlet weak var scanTextField: UITextField!
     var db: Connection?
-
+    let productBarcode = ""
+    let productName = ""
+    let productCount = ""
+    let productPrice =  ""
     let tblKardelen = Table("kardelenPRD")
     let dbProductBarcode = Expression<String>("productBarcode")
     let dbProductName = Expression<String>("productName")
@@ -60,13 +64,16 @@ class ViewController: UIViewController {
     }()
     */
     
+    var row_id = ""
+    
     let txtProductName : CustomTextField = {
         let txt = CustomTextField(padding:15)
         txt.backgroundColor = .white
         txt.placeholder = "Ürün İsmi"
         txt.keyboardType = .alphabet
         txt.addTarget(self, action: #selector(catchTextFieldChange), for: .editingChanged)
-        
+        txt.isEnabled = false
+
         return txt
     }()
     
@@ -132,6 +139,21 @@ class ViewController: UIViewController {
         return btn
     }()
     
+    let btnStockRetrieveFromFirebase : UIButton = {
+        
+        let btn = UIButton(type: .system)
+        btn.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        btn.layer.cornerRadius = 22
+        btn.setTitle("GETİR", for: .normal)
+        btn.setTitleColor(.white, for: .normal)
+        btn.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .heavy)
+        btn.backgroundColor = .lightGray
+        btn.setTitleColor(.darkGray, for: .disabled)
+        btn.isEnabled = true
+        btn.addTarget(self, action: #selector(btnStockRetrievePressed), for: .touchUpInside)
+        return btn
+    }()
+    
     
     fileprivate func backgroundGradientSet()
     {
@@ -165,7 +187,55 @@ class ViewController: UIViewController {
         let productlistController = ProductListViewController()
         present(productlistController, animated: true)
     }
-    @objc fileprivate func btnStockPressed(){
+    
+    @objc fileprivate func btnStockRetrievePressed() {
+        print("btnstockretrieve  is clicked")
+        
+         Firestore.firestore().collection("Products").getDocuments{ (snapshot, error) in
+             
+             if let error = error {
+                 print("PRoducts could not retrieved: \(error)")
+                 return
+             }
+             var condition = false
+             
+             snapshot?.documents.forEach({(dSnapshot) in
+                 
+                 let productsData  = dSnapshot.data()
+                 //print(productsData)
+                 let tmpProduct = Product.init(data: productsData)
+                 print(tmpProduct.productCount)
+                 print(tmpProduct.productName)
+                 print(tmpProduct.productPrice)
+                 print(tmpProduct.productBarcode)
+
+                 if(tmpProduct.productBarcode == self.txtProductBarcode.text){
+                     self.txtProductName.text = tmpProduct.productName
+                     self.txtProductCount.text = String(tmpProduct.productCount)
+                     self.txtProductPrice.text = String(tmpProduct.productPrice)
+                     condition = true
+                 }
+                 else{
+                     if condition == false {
+                            self.txtProductName.text =  "ürün bulunamadı"
+                            self.txtProductName.isEnabled = true
+                            self.txtProductPrice.text = ""
+                            self.txtProductCount.text = ""
+
+                     }
+                     
+                 }
+                 self.productArray.append(tmpProduct)
+                    // count=count+1
+             })
+         
+         }
+        
+      
+    }
+  
+    
+    @objc fileprivate func btnStockPressed(completion : @escaping (Error?) ->()){
         self.keyboardClose()
         guard let productBarcode = txtProductBarcode.text else {return }
         guard let productName = txtProductName.text else {return }
@@ -182,7 +252,14 @@ class ViewController: UIViewController {
             let insert = self.tblKardelen.insert(dbProductBarcode <- productBarcode, dbProductName <- productName, dbProductCount <- Expression<Double>(productCount),
             dbProductPrice <- Expression<Double>(productPrice))
             let rowid = try db!.run(insert)
+            row_id = String(rowid)
             print("Row inserted successfully id: \(rowid)")
+            self.stockInfoRecordToFireStore(productBarcode: productBarcode,
+                                            productName: productName,
+                                            productCount: productCount,
+                                            productPrice: productPrice,
+                                            completion: completion)
+            
           
         } catch {
             print("insertion failed: \(error)")
@@ -214,6 +291,28 @@ class ViewController: UIViewController {
        
     }
     
+    fileprivate func stockInfoRecordToFireStore(productBarcode : String,
+                                                productName : String,
+                                                productCount : String,
+                                                productPrice : String,
+                                                completion : @escaping (Error?) -> ()){
+        let insertionData = ["ProductName": productName ?? "",
+                            "ProductCount": productCount ?? "",
+                            "ProductPrice": productPrice ?? "",
+                            "ProductBarcode":  productBarcode ?? "",
+                             "ProductId": row_id ?? ""]
+        
+        Firestore.firestore().collection("Products").document(productBarcode+"-"+row_id).setData(insertionData) {
+            (error) in
+            if let error = error {
+                completion(error)
+                return
+            }
+            
+        }
+        
+    }
+    
     func dbSelectOperation() -> Int
     {
         var count=0
@@ -221,7 +320,7 @@ class ViewController: UIViewController {
         for prdc in try db!.prepare(tblKardelen) {
             print("product: \(prdc[dbProductName]), count: \(prdc[dbProductCount]), price: \(prdc[dbProductPrice]), barkodu: \(prdc[dbProductBarcode])")
        
-            let tmpProduct = Product()
+            let tmpProduct = Product(data: ["":""])
             tmpProduct.productName=prdc[dbProductName]
             tmpProduct.productCount=prdc[dbProductCount]
             tmpProduct.productPrice=prdc[dbProductPrice]
@@ -269,6 +368,7 @@ class ViewController: UIViewController {
         
         let vSv = UIStackView(arrangedSubviews: [
             txtProductBarcode,
+            btnStockRetrieveFromFirebase,
             txtProductName,
             txtProductCount,
             txtProductPrice,
@@ -349,9 +449,6 @@ class ViewController: UIViewController {
         
     }
   
-    
-  
-    
     func dbSetup()
     {
         let databaseFileName = "db.sqlite3"
