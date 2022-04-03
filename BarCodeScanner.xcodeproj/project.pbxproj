@@ -49,7 +49,10 @@
 		F42BE42D27F4EBFA00552936 /* Extensions+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42BE42C27F4EBFA00552936 /* Extensions+UIView.swift */; };
 		F42BE43327F4F70700552936 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = F42BE43227F4F70700552936 /* SQLite */; };
 		F42BE43527F4F92F00552936 /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42BE43427F4F92F00552936 /* Product.swift */; };
+		F450957127F9A939005FB505 /* ProductCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = F450957027F9A939005FB505 /* ProductCatalog.swift */; };
 		F452548527F672B800E46FA2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F452548427F672B800E46FA2 /* GoogleService-Info.plist */; };
+		F48F41C327F8E80200770ACD /* MainScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48F41C227F8E80200770ACD /* MainScreenViewController.swift */; };
+		F48F41C527F8E84F00770ACD /* StockRecorderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F48F41C427F8E84F00770ACD /* StockRecorderViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,7 +70,10 @@
 		F42BE42A27F4E12F00552936 /* StockViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockViewModel.swift; sourceTree = "<group>"; };
 		F42BE42C27F4EBFA00552936 /* Extensions+UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions+UIView.swift"; sourceTree = "<group>"; };
 		F42BE43427F4F92F00552936 /* Product.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
+		F450957027F9A939005FB505 /* ProductCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductCatalog.swift; sourceTree = "<group>"; };
 		F452548427F672B800E46FA2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		F48F41C227F8E80200770ACD /* MainScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScreenViewController.swift; sourceTree = "<group>"; };
+		F48F41C427F8E84F00770ACD /* StockRecorderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockRecorderViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +149,9 @@
 				F42BE43427F4F92F00552936 /* Product.swift */,
 				F41B704427F51065005F045D /* ProductListViewController.swift */,
 				F41B704627F517C6005F045D /* ProductCell.swift */,
+				F48F41C227F8E80200770ACD /* MainScreenViewController.swift */,
+				F48F41C427F8E84F00770ACD /* StockRecorderViewController.swift */,
+				F450957027F9A939005FB505 /* ProductCatalog.swift */,
 			);
 			path = BarCodeScanner;
 			sourceTree = "<group>";
@@ -255,13 +264,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				F42BE42D27F4EBFA00552936 /* Extensions+UIView.swift in Sources */,
+				F450957127F9A939005FB505 /* ProductCatalog.swift in Sources */,
 				F42BE43527F4F92F00552936 /* Product.swift in Sources */,
 				F41B704527F51065005F045D /* ProductListViewController.swift in Sources */,
+				F48F41C527F8E84F00770ACD /* StockRecorderViewController.swift in Sources */,
 				6313E5C72570FB2100CEBA0B /* ViewController.swift in Sources */,
 				6313E5C32570FB2100CEBA0B /* AppDelegate.swift in Sources */,
 				6313E5C52570FB2100CEBA0B /* SceneDelegate.swift in Sources */,
 				F42BE42B27F4E12F00552936 /* StockViewModel.swift in Sources */,
 				F41B704727F517C6005F045D /* ProductCell.swift in Sources */,
+				F48F41C327F8E80200770ACD /* MainScreenViewController.swift in Sources */,
 				6313E5D82570FB7400CEBA0B /* ScannerViewController.swift in Sources */,
 				F42BE42927F4E0B000552936 /* CustomTextField.swift in Sources */,
 			);
