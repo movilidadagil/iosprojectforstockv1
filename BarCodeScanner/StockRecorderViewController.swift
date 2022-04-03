@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 import SQLite
 import FirebaseFirestore
+import SwiftProtobuf
 
 class StockRecorderViewController : UIViewController, AVCapturePhotoCaptureDelegate {
     
@@ -241,11 +242,34 @@ class StockRecorderViewController : UIViewController, AVCapturePhotoCaptureDeleg
                                             productCount: productCount,
                                             productPrice: productPrice,
                                             completion: completion)
-            
+
+           showAlert(self)
           
+            
         } catch {
             print("insertion failed: \(error)")
+                self.showAlert(withTitle: "Kaydedilirken hata oluştu tekrar deneyiniz ", message: "HATA!!!")
+           
+
         }
+    }
+    
+    @IBAction func showAlert(_ sender: Any) {
+        let alertController = UIAlertController(title: "KARDELEN GIDA", message: "ÜRÜN BAŞARILI ŞEKİLDE KAYDEDİLDİ", preferredStyle: .alert)
+
+        let acceptAction = UIAlertAction(title: "OK", style: .default) { (_) -> Void in
+
+           // self.performSegue(withIdentifier: "SomeSegue", sender: self) // Replace SomeSegue with your segue identifier (name)
+            let stockRecorderView = StockRecorderViewController()
+            self.present(stockRecorderView, animated: true)
+         
+            self.verticalStackView.isHidden = true
+        }
+
+        alertController.addAction(acceptAction)
+
+        present(alertController, animated: true, completion: nil)
+        
     }
     
     var captureSession: AVCaptureSession!
@@ -465,6 +489,7 @@ class StockRecorderViewController : UIViewController, AVCapturePhotoCaptureDeleg
             txtProductPrice.isHidden = false
             btnStockRecorder.isHidden = false
             stopCameraLiveView()
+            
 
             
         }
